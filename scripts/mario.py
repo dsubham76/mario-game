@@ -44,6 +44,7 @@ class Dragon:
 		self.dragon_img_rect.right = width
 		self.up = True
 		self.down = False
+		print('dragon class init done')
 
 	def update(self):
 		canvas.blit(self.dragon_img, self.dragon_img_rect)
@@ -69,6 +70,8 @@ class Flames:
 		self.flames_img_rect.right = dragon.dragon_img_rect.left
 		self.flames_img_rect.top = dragon.dragon_img_rect.top +30
 
+		print('frame class init done')
+
 	def update(self):
 		canvas.blit(self.flames_img, self.flames_img_rect)
 
@@ -84,6 +87,7 @@ class Mario:
 		self.mario_img_rect.top=height/2 -100
 		self.down = True
 		self.up= False
+		print('mario class init done ')
 
 	def update(self):
 		canvas.blit(self.mario_img, self.mario_img_rect)
@@ -104,8 +108,8 @@ class Mario:
 
 def gameover():
 	pygame.mixer.music.stop()
-	music = pygame.mixer.sound('/home/subham/Desktop/mario_dies.wav')
-	music.play()
+	#music = pygame.mixer.sound('/home/subham/Desktop/mario_dies.wav')
+	#music.play()
 	topscore.top_score(score)
 	game_over_img = pygame.image.load('/home/subham/Desktop/end.png')
 	game_over_img_rect = game_over_img.get_rect()
@@ -120,7 +124,7 @@ def gameover():
 				if event.key == pygame.K_ESCAPE:
 					pygame.quit()
 					sys.exit()
-				music.stop()
+				#music.stop()
 				game_loop()
 		pygame.display.update()
 
@@ -162,40 +166,37 @@ def check_level(score):
 		level = 4
 
 def game_loop():
+	global dragon
+	global score
+	score = 0
+	global high_score
+	flames_list =[]
+	dragon = Dragon()
+	flames = Flames()
+	mario = Mario()
 	while True:
-		global dragon
-		#dragon = Dragon
-		dragon = Dragon()
-		flames = Flames()
-		mario = Mario()
-		add_new_frame_counter =0
-		global score
-		score =0
-		global high_score
-		flames_list =[]
-		pygame.mixer.music.load('/home/subham/Desktop/mario_theme.wav')
-		pygame.mixer.music.play(-1, 0.0)
-		while True:
-			canvas.fill(black)
-			check_level(score)
-			dragon.update()
-			add_new_frame_counter+=1
+		dragon.update()
+		flames.update()
+		mario.update()
+		add_new_frame_counter+=1
 
-			if add_new_frame_counter == add_new_frame_rate:
-				add_new_frame_counter =0
-				new_flame = Flames()
-				flames_list.append(new_flame)
-			for f in flames_list:
-				if f.flames_img_rect.left <=0:
-					flames_list.remove(f)
-					score +=1
-				f.update()
-			for event in pygame.event.get():
-				if event.type== pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-			pygame.display.flip()
+		if add_new_frame_counter == add_new_frame_rate:
+			add_new_frame_counter =0
+			new_flame = Flames()
+			flames_list.append(new_flame)
+		for f in flames_list:
+			if f.flames_img_rect.left <=0:
+				flames_list.remove(f)
+				score +=1
+			f.update()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+
+			pygame.display.update()
+		
 
 if __name__ == '__main__':
 
-	game_loop()
+	start_game()
